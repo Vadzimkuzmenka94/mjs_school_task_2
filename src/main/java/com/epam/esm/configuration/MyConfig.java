@@ -1,10 +1,11 @@
 package com.epam.esm.configuration;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.mchange.v2.c3p0.DriverManagerDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import javax.sql.DataSource;
@@ -13,16 +14,21 @@ import javax.sql.DataSource;
 @Configuration
 @ComponentScan(basePackages = "com.epam.esm")
 @EnableWebMvc
-
+@PropertySource("classpath:application.properties")
 public class MyConfig {
+    private final Environment environment;
 
-  @Bean
+    public MyConfig(Environment environment) {
+        this.environment = environment;
+    }
+
+    @Bean
   public DataSource dataSource () {
       DriverManagerDataSource dataSource = new DriverManagerDataSource();
-      dataSource.setDriverClass("org.postgresql.Driver");
-      dataSource.setJdbcUrl("jdbc:postgresql://localhost:5432/postgres");
-      dataSource.setUser("postgres");
-      dataSource.setPassword("admin");
+      dataSource.setDriverClass(environment.getProperty("driver"));
+      dataSource.setJdbcUrl(environment.getProperty("url"));
+      dataSource.setUser(environment.getProperty("username"));
+      dataSource.setPassword(environment.getProperty("password"));
       return dataSource;
   }
 
