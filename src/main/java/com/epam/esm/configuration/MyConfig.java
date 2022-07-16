@@ -1,14 +1,14 @@
 package com.epam.esm.configuration;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.mchange.v2.c3p0.DriverManagerDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import javax.sql.DataSource;
-import java.beans.PropertyVetoException;
-import java.util.Properties;
+
 
 @Configuration
 @ComponentScan(basePackages = "com.epam.esm")
@@ -16,6 +16,22 @@ import java.util.Properties;
 
 public class MyConfig {
 
+  @Bean
+  public DataSource dataSource () {
+      DriverManagerDataSource dataSource = new DriverManagerDataSource();
+      dataSource.setDriverClass("org.postgresql.Driver");
+      dataSource.setJdbcUrl("jdbc:postgresql://localhost:5432/postgres");
+      dataSource.setUser("postgres");
+      dataSource.setPassword("admin");
+      return dataSource;
+  }
+
+  @Bean
+    public JdbcTemplate jdbcTemplate () {
+      return new JdbcTemplate(dataSource());
+  }
+
+/*
     @Bean
     public DataSource dataSource() {
         ComboPooledDataSource comboPooledDataSource = new ComboPooledDataSource();
@@ -29,8 +45,9 @@ public class MyConfig {
         comboPooledDataSource.setPassword("admin");
         return comboPooledDataSource;
     }
+*/
 
-    @Bean
+/*    @Bean
     public LocalSessionFactoryBean sessionFactoryBean() {
         LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
         sessionFactoryBean.setDataSource(dataSource());
@@ -41,5 +58,5 @@ public class MyConfig {
 
         sessionFactoryBean.setHibernateProperties(hibernateProperties);
         return sessionFactoryBean;
-    }
+    }*/
 }
