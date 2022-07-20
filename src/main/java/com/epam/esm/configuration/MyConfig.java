@@ -1,6 +1,6 @@
 package com.epam.esm.configuration;
 
-import com.mchange.v2.c3p0.DriverManagerDataSource;
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -8,8 +8,9 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import javax.sql.DataSource;
 
+import javax.sql.DataSource;
+import java.beans.PropertyVetoException;
 
 @Configuration
 @ComponentScan(basePackages = "com.epam.esm")
@@ -23,22 +24,6 @@ public class MyConfig {
     }
 
     @Bean
-  public DataSource dataSource () {
-      DriverManagerDataSource dataSource = new DriverManagerDataSource();
-      dataSource.setDriverClass(environment.getProperty("driver"));
-      dataSource.setJdbcUrl(environment.getProperty("url"));
-      dataSource.setUser(environment.getProperty("username"));
-      dataSource.setPassword(environment.getProperty("password"));
-      return dataSource;
-  }
-
-  @Bean
-    public JdbcTemplate jdbcTemplate () {
-      return new JdbcTemplate(dataSource());
-  }
-
-/*
-    @Bean
     public DataSource dataSource() {
         ComboPooledDataSource comboPooledDataSource = new ComboPooledDataSource();
         try {
@@ -51,18 +36,9 @@ public class MyConfig {
         comboPooledDataSource.setPassword("admin");
         return comboPooledDataSource;
     }
-*/
 
-/*    @Bean
-    public LocalSessionFactoryBean sessionFactoryBean() {
-        LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
-        sessionFactoryBean.setDataSource(dataSource());
-        sessionFactoryBean.setPackagesToScan("com.epam.esm.entity");
-        Properties hibernateProperties = new Properties();
-        hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgresqlDialect");
-        hibernateProperties.setProperty("hibernate.show_sql", "true");
-
-        sessionFactoryBean.setHibernateProperties(hibernateProperties);
-        return sessionFactoryBean;
-    }*/
+    @Bean
+    public JdbcTemplate jdbcTemplate() {
+        return new JdbcTemplate(dataSource());
+    }
 }
